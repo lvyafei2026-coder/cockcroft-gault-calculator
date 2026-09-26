@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cockcroft-Gault Calculator — Creatinine Clearance (CrCl) for Drug Dosing</title>
+<meta name="description" content="Free Cockcroft-Gault calculator. Estimate creatinine clearance (CrCl) for drug dosing, using age, weight, sex, and serum creatinine. Includes renal impairment staging.">
+<meta name="keywords" content="cockcroft-gault calculator, creatinine clearance calculator, crcl calculator, renal function calculator, drug dosing renal impairment">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<meta name="theme-color" content="#0c4a6e">
+
+<link rel="canonical" href="https://toolara.dev/cockcroft-gault-calculator/zh/">
+<link rel="alternate" hreflang="en" href="https://toolara.dev/cockcroft-gault-calculator/">
+<link rel="alternate" hreflang="zh-Hans" href="https://toolara.dev/cockcroft-gault-calculator/zh/">
+<link rel="alternate" hreflang="x-default" href="https://toolara.dev/cockcroft-gault-calculator/">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cockcroft-Gault Calculator — Creatinine Clearance (CrCl)">
+<meta property="og:description" content="Estimate creatinine clearance for drug dosing using the Cockcroft-Gault equation.">
+<meta property="og:url" content="https://toolara.dev/cockcroft-gault-calculator/zh/">
+<meta property="og:locale" content="en_US">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Cockcroft-Gault Calculator",
+  "url": "https://toolara.dev/cockcroft-gault-calculator/zh/",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Any",
+  "description": "Free Cockcroft-Gault calculator for creatinine clearance estimation in drug dosing.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+
+<script>window.__FORCE_LANG__ = 'zh';</script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="lang-switch">
+    <select id="langSelect" onchange="setLang(this.value)" aria-label="Language">
+      <option value="en">English</option>
+      <option value="zh">简体中文</option>
+    </select>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-badge">💊 Clinical Tool</div>
+    <h1 data-i18n="title">Cockcroft-Gault Calculator</h1>
+    <p data-i18n="subtitle">Estimate creatinine clearance (CrCl) for drug dosing — using age, weight, sex, and serum creatinine.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card">
+    <h2 class="visually-hidden" data-i18n="calcHeading">Calculator</h2>
+
+    <div class="row">
+      <div>
+        <label for="age" data-i18n="ageLabel">Age (years)</label>
+        <input type="number" id="age" min="18" max="120" placeholder="65" value="65" inputmode="numeric">
+      </div>
+      <div>
+        <label for="weight" data-i18n="weightLabel">Body weight (kg)</label>
+        <input type="number" id="weight" min="1" max="300" step="0.1" placeholder="70" value="70" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="sex" data-i18n="sexLabel">Sex</label>
+        <select id="sex">
+          <option value="male" data-i18n="male">Male</option>
+          <option value="female" data-i18n="female">Female</option>
+        </select>
+      </div>
+      <div>
+        <label for="creatUnit" data-i18n="creatUnitLabel">Creatinine unit</label>
+        <select id="creatUnit">
+          <option value="mgdl" data-i18n="unitMgdl">mg/dL</option>
+          <option value="umol" data-i18n="unitUmol">µmol/L</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="creat" data-i18n="creatLabel">Serum creatinine</label>
+    <input type="number" id="creat" min="0.1" step="0.01" placeholder="1.2" value="1.2" inputmode="decimal">
+
+    <details class="advanced">
+      <summary data-i18n="advancedLabel">Advanced options</summary>
+      <label for="weightType" data-i18n="weightTypeLabel">Weight type</label>
+      <select id="weightType">
+        <option value="actual" data-i18n="weightActual">Actual body weight</option>
+        <option value="ideal" data-i18n="weightIdeal">Ideal body weight (IBW)</option>
+        <option value="adjusted" data-i18n="weightAdjusted">Adjusted body weight (ABW)</option>
+      </select>
+      <p class="hint" data-i18n="weightHint">For obese patients, some guidelines recommend using adjusted body weight (ABW) instead of actual body weight.</p>
+    </details>
+
+    <button class="calc" type="button" onclick="calculate()" data-i18n="calcBtn">Calculate creatinine clearance</button>
+
+    <div id="result" role="region" aria-live="polite">
+      <div class="result-label" data-i18n="resultLabel">Estimated creatinine clearance</div>
+      <div class="crcl-value"><span id="crclNum">—</span><span class="crcl-unit"> mL/min</span></div>
+      <div class="stage-note" id="stageNote"></div>
+
+      <div class="breakdown">
+        <div class="bd-row"><span data-i18n="bdFormula">Formula used</span><strong id="bdFormula">—</strong></div>
+        <div class="bd-row"><span data-i18n="bdAge">Age</span><strong id="bdAge">—</strong></div>
+        <div class="bd-row"><span data-i18n="bdWeight">Weight used</span><strong id="bdWeight">—</strong></div>
+        <div class="bd-row"><span data-i18n="bdSex">Sex</span><strong id="bdSex">—</strong></div>
+        <div class="bd-row"><span data-i18n="bdCreat">Serum creatinine</span><strong id="bdCreat">—</strong></div>
+      </div>
+
+      <div class="renal-stages">
+        <h3 data-i18n="stagesTitle">Renal function staging (CrCl)</h3>
+        <table>
+          <thead>
+            <tr><th data-i18n="thCrcl">CrCl (mL/min)</th><th data-i18n="thStage">Category</th><th data-i18n="thDose">Typical drug dosing note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>≥ 90</td><td data-i18n="stageNormal">Normal</td><td data-i18n="doseNormal">Standard dosing</td></tr>
+            <tr><td>60–89</td><td data-i18n="stageMild">Mild impairment</td><td data-i18n="doseMild">Usually standard dosing; check individual drugs</td></tr>
+            <tr><td>30–59</td><td data-i18n="stageModerate">Moderate impairment</td><td data-i18n="doseModerate">Many drugs require dose adjustment</td></tr>
+            <tr><td>15–29</td><td data-i18n="stageSevere">Severe impairment</td><td data-i18n="doseSevere">Most drugs require dose adjustment or avoidance</td></tr>
+            <tr><td>&lt; 15</td><td data-i18n="stageFailure">Kidney failure</td><td data-i18n="doseFailure">Dose per dialysis protocol; many drugs contraindicated</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="share-row">
+        <button class="share-btn" type="button" onclick="copyShareLink()" data-i18n="shareBtn">Copy shareable link</button>
+        <span class="share-copied" id="shareCopied" data-i18n="shareCopied">Copied!</span>
+      </div>
+
+      <div class="result-disclaimer" data-i18n="resultDisclaimer">Estimate only. Cockcroft-Gault is not validated in acute kidney injury, unstable creatinine, pregnancy, or extremes of body weight. Always consult clinical dosing references and adjust for individual patient factors.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-i18n="whatIsTitle">What is creatinine clearance?</h2>
+    <p data-i18n="whatIsText">Creatinine clearance (CrCl) estimates how much blood plasma the kidneys can clear of creatinine per minute. It is not the same as estimated GFR (eGFR) — CrCl is the standard used in most drug dosing labels and regulatory submissions. The Cockcroft-Gault equation, published in 1976, remains the most widely used formula in clinical pharmacology for adjusting drug doses in renal impairment.</p>
+  </section>
+
+  <section>
+    <h2 data-i18n="formulaTitle">The Cockcroft-Gault formula</h2>
+    <p class="formula">CrCl (mL/min) = [(140 − Age) × Weight(kg) × (0.85 if female)] / (72 × Scr in mg/dL)</p>
+    <p data-i18n="formulaText">Where Scr is serum creatinine. For µmol/L, use the modified form: CrCl = [(140 − Age) × Weight × (1.23 if male, 1.04 if female)] / Scr(µmol/L).</p>
+  </section>
+
+  <section>
+    <h2 data-i18n="weightTitle">Which weight to use</h2>
+    <p data-i18n="weightText">The Cockcroft-Gault equation was originally developed using actual body weight. However, for patients at extremes of body weight, guidelines differ:</p>
+    <ul>
+      <li data-i18n="wtActual"><strong>Actual body weight (ABW)</strong> — use when body weight is within 20% of ideal.</li>
+      <li data-i18n="wtIdeal"><strong>Ideal body weight (IBW)</strong> — some guidelines recommend IBW for CrCl estimation in obese patients.</li>
+      <li data-i18n="wtAdjusted"><strong>Adjusted body weight (ABW)</strong> — recommended by many antimicrobial dosing guidelines for obese patients.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 data-i18n="howToTitle">How to use this calculator</h2>
+    <ol>
+      <li data-i18n="howTo1">Enter patient age in years (18 or older).</li>
+      <li data-i18n="howTo2">Enter body weight in kilograms. For obese patients, consider adjusted or ideal body weight.</li>
+      <li data-i18n="howTo3">Select patient sex.</li>
+      <li data-i18n="howTo4">Enter serum creatinine and select the unit (mg/dL or µmol/L).</li>
+      <li data-i18n="howTo5">Click "Calculate creatinine clearance" to see the CrCl value and renal impairment category.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2 data-i18n="faqTitle">Frequently asked questions</h2>
+    <h3 data-i18n="faq1q">When should I use CrCl vs eGFR?</h3>
+    <p data-i18n="faq1a">Use CrCl (Cockcroft-Gault) for drug dosing — most FDA-approved drug labels are based on it. Use eGFR (CKD-EPI) for diagnosing and staging chronic kidney disease. They are not interchangeable.</p>
+
+    <h3 data-i18n="faq2q">Is Cockcroft-Gault accurate?</h3>
+    <p data-i18n="faq2a">It is the most widely used formula in drug dosing, but it has limitations. It overestimates CrCl in obese patients (uses actual weight), underestimates in elderly patients with low muscle mass, and is not validated in acute kidney injury where creatinine is changing rapidly.</p>
+
+    <h3 data-i18n="faq3q">How do I convert mg/dL to µmol/L?</h3>
+    <p data-i18n="faq3a">1 mg/dL = 88.42 µmol/L. This calculator handles the conversion automatically when you select the unit.</p>
+
+    <h3 data-i18n="faq4q">What does the result mean for drug dosing?</h3>
+    <p data-i18n="faq4a">CrCl ≥ 90 mL/min: standard dosing for most drugs. 60–89: usually standard, but check individual drugs. 30–59: many drugs need dose adjustment. 15–29: most drugs need adjustment or should be avoided. &lt; 15: dose per dialysis protocols; many drugs are contraindicated.</p>
+
+    <h3 data-i18n="faq5q">Why does the equation use 0.85 for females?</h3>
+    <p data-i18n="faq5a">The 0.85 factor accounts for the lower average muscle mass in women, which produces lower baseline serum creatinine at the same kidney function. Without this adjustment, CrCl would be overestimated in female patients.</p>
+
+    <div class="disclaimer" data-i18n="disclaimer"><strong>Medical disclaimer:</strong> This calculator provides estimates for educational and clinical reference purposes only. It is not a substitute for professional medical judgment. Always verify drug dosing against current clinical references and consider individual patient factors before adjusting any medication.</div>
+  </section>
+</main>
+
+<footer class="footer" data-i18n="footer">Runs entirely in your browser. No data is collected or stored.</footer>
+
+<script src="js/i18n.js"></script>
+<script src="js/calculator.js"></script>
+</body>
+</html>
